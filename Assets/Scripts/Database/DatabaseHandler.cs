@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -45,16 +44,7 @@ namespace Assets.Scripts.Database
             float x = 0;
             float z = 0;
             int k = 0;
-            for (int i = 0; i < 5; i++)
-            {
-                for (int j = 0; j < 20; j++)
-                {
-                    await Atom.GenerateAtomicModelAysnc(eles[k].Name, new Vector3(10 + x, 10, 5 + z), Quaternion.Euler(0, 0, 0), eles[k].Protons, eles[k].Neutrons, eles[k].Electrons);
-                    x += 15;
-                    k++;
-                }
-                z += 15;
-            }
+            await Atom.GenerateAtomicModelAysnc(eles[k].Name, new Vector3(10 + x, 10, 5 + z), Quaternion.Euler(0, 0, 0), eles[k].Protons, eles[k].Neutrons, eles[k].Electrons);
         }
 
         private void OnApplicationQuit()
@@ -84,6 +74,8 @@ namespace Assets.Scripts.Database
 
                     UpdateTable(values);
                 }
+                else
+                    UpdateTable(values);
             }
         }
 
@@ -117,7 +109,7 @@ namespace Assets.Scripts.Database
                 insertQuery += ";";
 
                 SqliteCommand sqliteCmd = new SqliteCommand(insertQuery, SQLiteHandler.conn);
-                sqliteCmd.ExecuteNonQuery();
+                int rowsAffected = sqliteCmd.ExecuteNonQuery();
                 sqliteCmd.Dispose();
             }
 
