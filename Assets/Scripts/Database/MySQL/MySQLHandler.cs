@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Exceptions;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,7 +30,7 @@ namespace Assets.Scripts.Database.MySQL
 
                 Debug.Log($"MySQL started with state: {connectionState}");
             }
-            catch (Exception ex) { ExceptionWriting.WriteException(ex); }
+            catch (Exception ex) { { Debug.LogError(ex); } }
         }
 
         public static void Stop()

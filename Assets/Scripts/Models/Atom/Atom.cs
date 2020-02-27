@@ -32,7 +32,7 @@ namespace Assets.Scripts.Models
             return model;
         }
 
-        public static async Task<GameObject> GenerateAtomicModelAysnc(string name, Vector3 position, Quaternion rotation, int protons, int neutrons, int electrons)
+        public static GameObject GenerateAtomicModelAysnc(string name, Vector3 position, Quaternion rotation, int protons, int neutrons, int electrons)
         {
             GameObject model = new GameObject(name);
             model.transform.SetPositionAndRotation(position, rotation);

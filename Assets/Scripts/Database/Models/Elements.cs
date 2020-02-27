@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace Assets.Scripts.Database.Models
 {
-    public class elements : ModelBase
+    public class Elements : ModelBase
     {
         public int ID;
         public string Name;

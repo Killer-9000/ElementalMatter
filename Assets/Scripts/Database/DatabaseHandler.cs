@@ -2,11 +2,11 @@
 using Assets.Scripts.Database.MySQL;
 using Assets.Scripts.Database.SQLite;
 using Assets.Scripts.Models;
-using Mono.Data.SqliteClient;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -17,10 +17,6 @@ namespace Assets.Scripts.Database
     {
         public static DatabaseHandler instance;
 
-        public string MysqlAddress;
-        public string MysqlUsername;
-        public string MysqlPassword;
-
         private void Awake()
         {
             instance = this;
@@ -30,21 +26,12 @@ namespace Assets.Scripts.Database
         {
             // Start up handlers
             SQLiteHandler.Start();
-            MySQLHandler.Start(MysqlAddress, MysqlUsername, MysqlPassword);
+            MySQLHandler.Start("killer9k.heliohost.org", "killer9k_game", "epicgamepass");
 
             // Check to see if there is an update
             CheckForUpdate();
 
             LoadAtoms();
-        }
-
-        private async Task LoadAtoms()
-        {
-            List<elements> eles = SQLiteHandler.GetElements();
-            float x = 0;
-            float z = 0;
-            int k = 0;
-            await Atom.GenerateAtomicModelAysnc(eles[k].Name, new Vector3(10 + x, 10, 5 + z), Quaternion.Euler(0, 0, 0), eles[k].Protons, eles[k].Neutrons, eles[k].Electrons);
         }
 
         private void OnApplicationQuit()
@@ -57,7 +44,17 @@ namespace Assets.Scripts.Database
                 MySQLHandler.Stop();
         }
 
-        public void CheckForUpdate()
+
+        private void LoadAtoms()
+        {
+            List<Elements> eles = this.GetAllElements().ToList();
+            float x = 0;
+            float z = 0;
+            int k = 10;
+            Atom.GenerateAtomicModelAysnc(eles[k].Name, new Vector3(10 + x, 10, 5 + z), Quaternion.Euler(0, 0, 0), eles[k].Protons, eles[k].Neutrons, eles[k].Electrons);
+        }
+
+        private void CheckForUpdate()
         {
             // Get timestamps
             DateTime currentUpdate = SQLiteHandler.GetUpdateTimestamp();
@@ -66,55 +63,33 @@ namespace Assets.Scripts.Database
             foreach(string table in tables)
             {
                 string[] values = table.Split('|');
-                DateTime update;
-                if (DateTime.TryParse(values[1], out update))
+                if (DateTime.Parse(values[1]) > currentUpdate)
                 {
-                    if (update < currentUpdate)
-                        return;
+                    MySqlCommand cmd = new MySqlCommand($"SELECT * FROM `killer9k_ElementalMatter`.`{values[0]}`", MySQLHandler.conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
 
-                    UpdateTable(values);
+                    PropertyInfo[] properties = Type.GetType(values[0]).GetProperties();
+                    string insertQuery = $"INSERT INTO `killer9k_ElementalMatter`.`{values[0]}` (";
+                    for (int i = 0; i < properties.Length; i++)
+                        insertQuery += $"`{properties[i].Name}`, ";
+                    insertQuery.Remove(insertQuery.Length - 2);
+                    insertQuery += ") VALUES ";
+
+                    while (reader.Read())
+                    {
+                        Type.GetType(values[0]).GetMethod("Populate").Invoke(null, new object[] { reader });
+                        insertQuery += $"(";
+                        for (int i = 0; i < reader.FieldCount; i++)
+                            insertQuery += $"'{reader[i]}', ";
+                        insertQuery.Remove(insertQuery.Length - 2);
+                        insertQuery += "),";
+                    }
+                    insertQuery.Remove(insertQuery.Length - 1);
+                    insertQuery += ";";
                 }
-                else
-                    UpdateTable(values);
             }
         }
 
-        private void UpdateTable(string[] values)
-        {
-            MySqlCommand cmd = new MySqlCommand($"SELECT * FROM `ElementalMatter`.`{values[0]}`", MySQLHandler.conn);
-            MySqlDataReader reader = cmd.ExecuteReader();
-
-            Type type = Type.GetType("Assets.Scripts.Database.Models." + values[0]);
-            FieldInfo[] fields = type.GetFields();
-            if (fields.Length > 0 && reader.HasRows)
-            {
-                string insertQuery = $"INSERT INTO `{values[0]}` (";
-                for (int i = 0; i < fields.Length; i++)
-                    insertQuery += $"`{fields[i].Name}`, ";
-                insertQuery = insertQuery.Remove(insertQuery.Length - 2);
-                insertQuery += ") VALUES\n";
-
-                while (reader.Read())
-                {
-                    var generatedClass = Activator.CreateInstance(type);
-                    type.GetMethod("Populate").Invoke(generatedClass, new object[] { reader });
-
-                    insertQuery += $"(";
-                    for (int i = 0; i < reader.FieldCount; i++)
-                        insertQuery += $"'{reader[i]}', ";
-                    insertQuery = insertQuery.Remove(insertQuery.Length - 2);
-                    insertQuery += "),\n";
-                }
-                insertQuery = insertQuery.Remove(insertQuery.Length - 2);
-                insertQuery += ";";
-
-                SqliteCommand sqliteCmd = new SqliteCommand(insertQuery, SQLiteHandler.conn);
-                int rowsAffected = sqliteCmd.ExecuteNonQuery();
-                sqliteCmd.Dispose();
-            }
-
-            reader.Close();
-            cmd.Dispose();
-        }
+        public IEnumerable<Elements> GetAllElements() => SQLiteHandler.GetElements();
     }
 }
