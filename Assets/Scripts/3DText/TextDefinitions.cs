@@ -59,6 +59,6 @@ public static class TextDefinitions
         { 'y', 0.75f },
         { 'z', 0.75f },
 
-        { ' ', 0.5f},
+        { ' ', 0.5f },
     };
 }

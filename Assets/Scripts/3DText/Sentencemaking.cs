@@ -1,4 +1,7 @@
-﻿using UnityEditor;
+﻿using Assets.Scripts.Database;
+using Assets.Scripts.Database.Models;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Sentencemaking : MonoBehaviour
@@ -23,39 +26,54 @@ public class Sentencemaking : MonoBehaviour
 
     void TextMeshUpdate()
     {
-        foreach (Transform child in this.transform)
+        bool charIsSpace = false;
+        foreach (Transform child in transform)
             Destroy(child.gameObject);
 
         if (sentence.Length > 0)
         {
             for (int i = 0; i < sentence.Length; i++)
             {
-                if (sentence[i] != ' ')
+                GameObject letterMesh = null;
+
+                if (char.IsUpper(sentence[i]))
+                    letterMesh = Instantiate((GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Resources/Models/3DText/Uppercase/alphabet_{sentence[i]}.fbx", typeof(GameObject)));
+                else if (char.IsLower(sentence[i]))
+                    letterMesh = Instantiate((GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Resources/Models/3DText/Lowercase/alphabet_{sentence[i]}.fbx", typeof(GameObject)));
+                else if (char.IsDigit(sentence[i]))
+                    letterMesh = Instantiate((GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Resources/Models/3DText/Numbers/number_{sentence[i]}.fbx", typeof(GameObject)));
+                else
                 {
-                    GameObject letterMesh;
-
-                    if (char.IsUpper(sentence[i]))
-                        letterMesh = (GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Resources/Models/3DText/Uppercase/alphabet_{sentence[i]}.fbx", typeof(GameObject));
-                    else if (char.IsLower(sentence[i]))
-                        letterMesh = (GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Resources/Models/3DText/Lowercase/alphabet_{sentence[i]}.fbx", typeof(GameObject));
-                    else
-                        letterMesh = (GameObject)AssetDatabase.LoadAssetAtPath($"Assets/Resources/Models/3DText/Numbers/number_{sentence[i]}.fbx", typeof(GameObject));
-
-                    GameObject initalisationOfIt = Instantiate(letterMesh);
-                    initalisationOfIt.transform.SetParent(this.transform);
-
-                    initalisationOfIt.transform.position = transform.position;
-
-                    if(i > 0)
-                        initalisationOfIt.transform.position = new Vector3(-transform.GetChild(i - 1).transform.position.x * TextDefinitions.textOffsets[sentence[i - 1]], 0, 0);
-
-                    initalisationOfIt.GetComponent<MeshRenderer>();
-                    initalisationOfIt.AddComponent<MeshCollider>().convex = true;
-                    //thingyXD.AddComponent<Throwable>();
+                    letterMesh = new GameObject("Space");
+                    charIsSpace = true;
                 }
+
+                letterMesh.transform.SetParent(transform);
+
+                if (i > 0)
+                {
+                    float offset = transform.GetChild(i - 1).transform.localPosition.x + TextDefinitions.textOffsets[sentence[i - 1]];
+                    if (charIsSpace)
+                        offset += 0.5f; charIsSpace = false;
+
+                    letterMesh.transform.localPosition = new Vector3(offset, 0, 0);
+                }
+                else
+                    letterMesh.transform.localPosition = new Vector3(0, 0, 0);
+
+                letterMesh.transform.localRotation = Quaternion.Euler(0, 180, 0);
             }
         }
-
         prevSentence = sentence;
+    }
+
+    void AddSymbolInfo()
+    {
+        IEnumerable<Elements> elements = DatabaseHandler.instance.GetAllElements();
+
+        foreach(Elements element in elements)
+        {
+
+        }
     }
 }

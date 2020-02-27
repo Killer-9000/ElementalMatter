@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Database.Models;
-using Assets.Scripts.Exceptions;
 using Mono.Data.SqliteClient;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace Assets.Scripts.Database.SQLite
 {
     public static class SQLiteHandler
     {
-        public static SqliteConnection conn;
+        private static SqliteConnection conn;
 
         public static ConnectionState connectionState 
         {
@@ -30,7 +29,7 @@ namespace Assets.Scripts.Database.SQLite
 
                 Debug.Log($"SQLite started with state: {conn.State}");
             }
-            catch (Exception ex) { ExceptionWriting.WriteException(ex); }
+            catch (Exception ex) { Debug.LogError(ex); }
         }
 
         public static void Stop()
@@ -52,27 +51,27 @@ namespace Assets.Scripts.Database.SQLite
                 return DateTime.MinValue;
             }
 
+
             throw new Exception("SQLite: Connection needs to be open to pull data from db.");
         }
 
-        public static List<elements> GetElements()
+        public static IEnumerable<Elements> GetElements()
         {
             if (connectionState == ConnectionState.Open)
             {
-                List<elements> result = new List<elements>();
-
-                SqliteCommand cmd = new SqliteCommand(SQLiteQueries.GetElements, conn);
+                List<Elements> elements = new List<Elements>();
+                SqliteCommand cmd = new SqliteCommand(SQLiteQueries.RDRUpdate, conn);
                 SqliteDataReader reader = cmd.ExecuteReader();
 
-                while (reader.Read())
+                if (reader.Read())
                 {
-                    elements row = new elements();
-                    row.Populate(reader);
+                    Elements element = new Elements();
+                    element.Populate(reader);
 
-                    result.Add(row);
+                    elements.Add(element);
                 }
 
-                return result;
+                return elements;
             }
 
             throw new Exception("SQLite: Connection needs to be open to pull data from db.");
@@ -82,6 +81,5 @@ namespace Assets.Scripts.Database.SQLite
     public static class SQLiteQueries
     {
         public static readonly string RDRUpdate = "SELECT LastUpdate FROM Meta;";
-        public static readonly string GetElements = "SELECT * FROM Elements;";
     }
 }
