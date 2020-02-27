@@ -6,7 +6,7 @@ using Valve.VR.InteractionSystem;
 
 public class MenuButtonScripts : MonoBehaviour
 {
-    public GameObject MainMenu, HowToPlay, Log, player;
+    public GameObject MainMenuPrefab, HowToPlayPrefab, LogPrefab, player;
 
     public void Start()
     {
@@ -18,7 +18,7 @@ public class MenuButtonScripts : MonoBehaviour
         Debug.Log("Button Pressed!");
         Transform parent = player.GetComponent<ControllerMenu>().activeMenu.transform.parent; //Finds the hand that the menu is with
         Destroy(player.GetComponent<ControllerMenu>().activeMenu); //Destroys the active menu
-        player.GetComponent<ControllerMenu>().activeMenu = Instantiate(HowToPlay, parent.transform); //Instanciates the new prefab to the hand
+        player.GetComponent<ControllerMenu>().activeMenu = Instantiate(HowToPlayPrefab, parent.transform); //Instanciates the new prefab to the hand
 
     }
 
@@ -27,7 +27,7 @@ public class MenuButtonScripts : MonoBehaviour
         Debug.Log("Button Pressed!");
         Transform parent = player.GetComponent<ControllerMenu>().activeMenu.transform.parent; //Finds the hand that the menu is with
         Destroy(player.GetComponent<ControllerMenu>().activeMenu); //Destroys the active menu
-        player.GetComponent<ControllerMenu>().activeMenu = Instantiate(Log, parent.transform); //Instanciates the new prefab to the hand
+        player.GetComponent<ControllerMenu>().activeMenu = Instantiate(LogPrefab, parent.transform); //Instanciates the new prefab to the hand
 
     }
 
@@ -36,7 +36,7 @@ public class MenuButtonScripts : MonoBehaviour
         Debug.Log("Button Pressed!");
         Transform parent = player.GetComponent<ControllerMenu>().activeMenu.transform.parent; //Finds the hand that the menu is with
         Destroy(player.GetComponent<ControllerMenu>().activeMenu); //Destroys the active menu
-        player.GetComponent<ControllerMenu>().activeMenu = Instantiate(MainMenu, parent.transform); //Instanciates the new prefab to the hand
+        player.GetComponent<ControllerMenu>().activeMenu = Instantiate(MainMenuPrefab, parent.transform); //Instanciates the new prefab to the hand
     }
 }
 

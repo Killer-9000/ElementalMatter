@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4772989818677336159}
   m_Layer: 5
   m_Name: How To Play
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 1, g: 0, b: 0, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7855264463779802372}
+      - m_Target: {fileID: 4333446379656043637}
         m_MethodName: btnHowToPlay
         m_Mode: 1
         m_Arguments:
@@ -159,7 +159,7 @@ GameObject:
   - component: {fileID: 7122568862812983079}
   m_Layer: 5
   m_Name: Log
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 1, g: 0, b: 0, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -277,7 +277,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7855264463779802372}
+      - m_Target: {fileID: 4333446379656043637}
         m_MethodName: btnChangeLog
         m_Mode: 1
         m_Arguments:
@@ -704,7 +704,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7655655538248850924}
-  - component: {fileID: 7855264463779802372}
+  - component: {fileID: 4333446379656043637}
   m_Layer: 0
   m_Name: ButtonScripts
   m_TagString: Untagged
@@ -726,7 +726,7 @@ Transform:
   m_Father: {fileID: 7166398444263579774}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7855264463779802372
+--- !u!114 &4333446379656043637
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -735,13 +735,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 7598464290285987341}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37b57a458ca0d454f8bee3aa8341c796, type: 3}
+  m_Script: {fileID: 11500000, guid: dcd59c77b98ca304ea02bd8f0f36a34c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MainMenu: {fileID: 7166398444263579770}
-  HowToPlay: {fileID: 7166398444263579770, guid: f4b885c48cf14ec4a8de8522cc5ae70d,
+  MainMenuPrefab: {fileID: 7166398444263579770}
+  HowToPlayPrefab: {fileID: 7166398444263579770, guid: f4b885c48cf14ec4a8de8522cc5ae70d,
     type: 3}
-  Log: {fileID: 7166398444263579770, guid: 9b0bc6ff3bdd3504cafeedd1726ac030, type: 3}
+  LogPrefab: {fileID: 7166398444263579770, guid: 9b0bc6ff3bdd3504cafeedd1726ac030,
+    type: 3}
   player: {fileID: 0}
 --- !u!1 &7874809043354843156
 GameObject:

@@ -7,7 +7,7 @@ public class ControllerMenu : MonoBehaviour
 {
     public static ControllerMenu instance;
 
-    public GameObject mainMenuPrefab, howToPlayPrefab;
+    public GameObject mainMenuPrefab;
 
     [HideInInspector]
     public GameObject activeMenu;
