@@ -48,9 +48,6 @@ namespace Assets.Scripts.Database.MySQL
                 MySqlCommand cmd = new MySqlCommand(MySQLQueries.RDRUpdate, conn);
                 MySqlDataReader reader = cmd.ExecuteReader();
 
-                // Getting latest update in local database
-
-
                 // Comparing update times
                 while(reader.Read())
                     result.Add(reader[0].ToString() + "|" + reader[1].ToString());
@@ -69,6 +66,6 @@ namespace Assets.Scripts.Database.MySQL
     public static class MySQLQueries
     {
         public static readonly string RDRUpdate = "USE `information_schema`;\n" +
-            "SELECT TABLE_NAME, UPDATE_TIME FROM TABLES WHERE TABLE_SCHEMA = 'elementalmatter';";
+            "SELECT TABLE_NAME, UPDATE_TIME FROM TABLES WHERE TABLE_SCHEMA = 'FfN0VA06HT';";
     }
 }

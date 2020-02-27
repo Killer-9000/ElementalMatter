@@ -42,16 +42,19 @@ namespace Assets.Scripts.Database.SQLite
         {
             if(connectionState == ConnectionState.Open)
             {
-                SqliteCommand cmd = new SqliteCommand(SQLiteQueries.RDRUpdate, conn);
-                SqliteDataReader reader = cmd.ExecuteReader();
+                using (SqliteCommand cmd = new SqliteCommand(SQLiteQueries.RDRUpdate, conn))
+                {
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                    {
 
-                if (reader.Read())
-                    return DateTime.Parse(reader[0].ToString());
+                        if (reader.Read())
+                            return DateTime.Parse(reader[0].ToString());
 
-                return DateTime.MinValue;
+                        return DateTime.MinValue;
+                    }
+                }
             }
-
-
+            
             throw new Exception("SQLite: Connection needs to be open to pull data from db.");
         }
 
@@ -60,15 +63,18 @@ namespace Assets.Scripts.Database.SQLite
             if (connectionState == ConnectionState.Open)
             {
                 List<Elements> elements = new List<Elements>();
-                SqliteCommand cmd = new SqliteCommand(SQLiteQueries.RDRUpdate, conn);
-                SqliteDataReader reader = cmd.ExecuteReader();
-
-                if (reader.Read())
+                using (SqliteCommand cmd = new SqliteCommand(SQLiteQueries.ELESelect, conn))
                 {
-                    Elements element = new Elements();
-                    element.Populate(reader);
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Elements element = new Elements();
+                            element.Populate(reader);
 
-                    elements.Add(element);
+                            elements.Add(element);
+                        }
+                    }
                 }
 
                 return elements;
@@ -76,10 +82,19 @@ namespace Assets.Scripts.Database.SQLite
 
             throw new Exception("SQLite: Connection needs to be open to pull data from db.");
         }
+
+        public static int UpdateTable(string query)
+        {
+            using (SqliteCommand cmd = new SqliteCommand(query, conn))
+            {
+                return cmd.ExecuteNonQuery();
+            }
+        }
     }
 
     public static class SQLiteQueries
     {
         public static readonly string RDRUpdate = "SELECT LastUpdate FROM Meta;";
+        public static readonly string ELESelect = "SELECT * FROM Elements;";
     }
 }
