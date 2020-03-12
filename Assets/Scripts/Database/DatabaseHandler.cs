@@ -5,6 +5,7 @@ using Assets.Scripts.Models;
 using Mono.Data.SqliteClient;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -29,9 +30,9 @@ namespace Assets.Scripts.Database
             MySQLHandler.Start("remotemysql.com", "FfN0VA06HT", "6VPphc2QZ7");
 
             // Check to see if there is an update
-            CheckForUpdate();
+            StartCoroutine(CheckForUpdate());
 
-            LoadAtoms();
+            //LoadAtoms();
         }
 
         private void OnApplicationQuit()
@@ -58,8 +59,10 @@ namespace Assets.Scripts.Database
             }
         }
 
-        private void CheckForUpdate()
+        private IEnumerator CheckForUpdate()
         {
+            yield return new AsyncOperation();
+
             if (MySQLHandler.connectionState == ConnectionState.Open)
             {
                 // Get timestamps
