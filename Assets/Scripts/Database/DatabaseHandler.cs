@@ -27,7 +27,7 @@ namespace Assets.Scripts.Database
         {
             // Start up handlers
             SQLiteHandler.Start();
-            MySQLHandler.Start("remotemysql.com", "FfN0VA06HT", "6VPphc2QZ7");
+            MySQLHandler.Start("127.0.0.1", "root", "ascent");
 
             // Check to see if there is an update
             StartCoroutine(CheckForUpdate());
