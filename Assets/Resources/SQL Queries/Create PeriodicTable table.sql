@@ -1,9 +1,3 @@
-# Creating database
-DROP DATABASE IF EXISTS `ElementalMatter`;
-CREATE DATABASE `ElementalMatter`;
-
-USE `ElementalMatter`;
-
 # Creating Elements
 DROP TABLE IF EXISTS `Elements`;
 
