@@ -66,6 +66,6 @@ namespace Assets.Scripts.Database.MySQL
     public static class MySQLQueries
     {
         public static readonly string RDRUpdate = "USE `information_schema`;\n" +
-            "SELECT TABLE_NAME, UPDATE_TIME FROM TABLES WHERE TABLE_SCHEMA = 'FfN0VA06HT';";
+            "SELECT TABLE_NAME, UPDATE_TIME FROM TABLES WHERE TABLE_SCHEMA = 'elementalmatter';";
     }
 }

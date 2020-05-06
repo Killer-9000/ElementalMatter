@@ -1,0 +1,4 @@
+[submodule "Assets/Resources/Models/ElementalMatter"]
+	path = Assets/Resources/Models/ElementalMatter
+	url = https://github.com/Killer-9000/ElementalMatter.git
+	branch = models
