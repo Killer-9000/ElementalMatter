@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.Models
@@ -6,12 +7,31 @@ namespace Assets.Scripts.Models
     public class ElectronRing : MonoBehaviour
     {
         public float speed = 10f;
+        public float ringSpan = 0;
+        private ElectronRingRotationTypes prevRotationType = ElectronRingRotationTypes.Rotation2D;
         public ElectronRingRotationTypes currentRotationType = ElectronRingRotationTypes.Rotation2D;
 
-        private List<GameObject> electrons = new List<GameObject>();
+        // Each ring with its individual electrons
+        private List<GameObject> _rings = new List<GameObject>();
 
+        private void Update()
+        {
+            if (currentRotationType != prevRotationType)
+            {
+                SwitchElectronRingRotationType(currentRotationType);
+                prevRotationType = currentRotationType;
+            }
+        }
+
+        /// <summary>
+        /// Generates the electron rings of an atom. Made with use of atom class in mind.
+        /// </summary>
+        /// <param name="electrons">The number of electrons there are.</param>
+        /// <param name="start">Start radius of first ring.</param>
+        /// <returns></returns>
         public GameObject GenerateElectronRings(int electrons, float start)
         {
+            // Creating the container object
             GameObject model = new GameObject("ElectronRings");
             model.transform.parent = this.transform;
             model.transform.localPosition = Vector3.zero;
@@ -19,17 +39,19 @@ namespace Assets.Scripts.Models
             uint ring = 1;
             float ringDist = 0;
             float electron = 0;
-            List<GameObject> rings = new List<GameObject>();
             GameObject tmp = new GameObject($"ElectronRing{ring}");
             tmp.transform.parent = model.transform;
 
+            // Generating ring
             tmp.AddComponent<Torus>();
             tmp.GetComponent<Torus>().GenerateTorus(this.transform.position, start, 0.2f);
 
             tmp.transform.localPosition = Vector3.zero;
-            rings.Add(tmp);
+            _rings.Add(tmp);
 
+            // Generating individual electrons
             bool allElectrons = true; float amountNeeded = 0;
+            List<GameObject> elecs = new List<GameObject>();
             for ( int i = 0; i < electrons; i++ )
             {
                 float amountOfElectrons;
@@ -40,12 +62,12 @@ namespace Assets.Scripts.Models
 
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.name = $"Electron{electron}";
-                sphere.transform.parent = rings[(int)ring - 1].transform;
+                sphere.transform.parent = _rings[(int)ring - 1].transform;
                 sphere.transform.localPosition = new Vector3(start + ringDist, 0, 0);
                 sphere.transform.RotateAround(this.transform.position, Vector3.up, (360 / amountOfElectrons) * electron);
                 sphere.GetComponent<MeshRenderer>().material.color = Color.yellow;
 
-                this.electrons.Add(sphere);
+                elecs.Add(sphere);
                 electron++;
 
                 if (electron == amountOfElectrons && i < electrons - 1)
@@ -70,9 +92,11 @@ namespace Assets.Scripts.Models
 
                     tmpa.transform.localPosition = Vector3.zero;
 
-                    rings.Add(tmpa);
+                    _rings.Add(tmpa);
                 }
             }
+
+            ringSpan = ringDist;
 
             return model;
         }
@@ -85,13 +109,38 @@ namespace Assets.Scripts.Models
         /// <returns>Returns a boolean based on if it was success</returns>
         public void SwitchElectronRingRotationType(ElectronRingRotationTypes type)
         {
+            if(type == ElectronRingRotationTypes.Rotation2D)
+            {
+                for (int i = 0; i < _rings.Count; i++)
+                {
+                    Vector3 rot = _rings[i].transform.rotation.eulerAngles; rot.x = 0;
+                    StartCoroutine(rotateRing(_rings[i], Quaternion.Euler(rot)));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _rings.Count; i++)
+                {
+                    Vector3 rot = _rings[i].transform.localRotation.eulerAngles; rot.x = i * (180 / _rings.Count);
+                    StartCoroutine(rotateRing(_rings[i], Quaternion.Euler(rot)));
+                }
+            }
+        }
 
+        private IEnumerator rotateRing(GameObject ring, Quaternion newRot)
+        {
+            while (ring.transform.localRotation.x <= newRot.x)
+            {
+                ring.transform.localRotation = Quaternion.RotateTowards(ring.transform.localRotation, newRot, speed * 3 * Time.deltaTime);
+                yield return null;
+            }
         }
 
         private void LateUpdate()
         {
-            foreach(GameObject electron in electrons)
-                electron.transform.RotateAround(this.transform.position, Vector3.up, speed * Time.deltaTime);
+            foreach(GameObject ring in _rings)
+                for(int i = 0; i < ring.transform.childCount; i++)
+                    ring.transform.GetChild(i).RotateAround(ring.transform.position, ring.transform.up, speed * 3 * Time.deltaTime);
         }
     }
 

@@ -29,23 +29,15 @@ namespace Assets.Scripts.Models
             model.AddComponent<ElectronRing>();
             model.GetComponent<ElectronRing>().GenerateElectronRings(electrons, model.GetComponent<Nucleus>().range + 1.1f);
 
-            return model;
-        }
+            float height = model.GetComponent<Nucleus>().range;
+            float width = model.GetComponent<ElectronRing>().ringSpan;
 
-        public static GameObject GenerateAtomicModelAysnc(string name, Vector3 position, Quaternion rotation, int protons, int neutrons, int electrons)
-        {
-            GameObject model = new GameObject(name);
-            model.transform.SetPositionAndRotation(position, rotation);
-
-            // Generate Nucleus
-            model.AddComponent<Nucleus>();
-            model.GetComponent<Nucleus>().GenerateNucleus(protons, neutrons);
-
-            // Generate Electron Rings
-            model.AddComponent<ElectronRing>();
-            model.GetComponent<ElectronRing>().GenerateElectronRings(electrons, model.GetComponent<Nucleus>().range + 1.1f);
+            model.AddComponent<Interaction>();
+            model.GetComponent<Interaction>().CreateCollision(width, height);
 
             return model;
         }
+
+
     }
 }

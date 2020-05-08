@@ -32,7 +32,7 @@ namespace Assets.Scripts.Database
             // Check to see if there is an update
             StartCoroutine(CheckForUpdate());
 
-            //LoadAtoms();
+            LoadAtoms();
         }
 
         private void OnApplicationQuit()
@@ -54,7 +54,7 @@ namespace Assets.Scripts.Database
             int k;
             for (k = 10; k < 20; k++)
             {
-                Atom.GenerateAtomicModelAysnc(eles[k].Name, new Vector3(10 + x, 10, 5 + z), Quaternion.Euler(0, 0, 0), eles[k].Protons, eles[k].Neutrons, eles[k].Electrons);
+                Atom.GenerateAtomicModel(eles[k].Name, new Vector3(10 + x, 10, 5 + z), Quaternion.Euler(0, 0, 0), eles[k].Protons, eles[k].Neutrons, eles[k].Electrons);
                 x += 10;
             }
         }
